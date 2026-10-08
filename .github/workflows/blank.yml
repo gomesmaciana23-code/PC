@@ -28,16 +28,16 @@ jobs:
           Write-Host "`n=== SYSTEM SPECIFICATIONS ==="
 
       - name: Install 7-Zip (Direct)
-        shell: powershell
-        run: |
-          Write-Host "Downloading 7-Zip..."
-          $zipUrl = "https://7-zip.org"
-          $installerPath = "$env:TEMP\7z-installer.exe"
-          Invoke-WebRequest -Uri $zipUrl -OutFile $installerPath
-          Write-Host "Installing 7-Zip silently..."
-          Start-Process -FilePath $installerPath -ArgumentList "/S" -Wait
-          Remove-Item $installerPath -Force
-          Write-Host "7-Zip installed!"
+  shell: powershell
+  run: |
+    Write-Host "Downloading 7-Zip..."
+    $zipUrl = "https://7-zip.org/a/7z2407-x64.exe"
+    $installerPath = "$env:TEMP\7z-installer.exe"
+    Invoke-WebRequest -Uri $zipUrl -OutFile $installerPath
+    Write-Host "Installing 7-Zip silently..."
+    Start-Process -FilePath $installerPath -ArgumentList "/S" -Wait
+    Remove-Item $installerPath -Force
+    Write-Host "7-Zip installed!"
 
       - name: Connection Details
         shell: powershell
