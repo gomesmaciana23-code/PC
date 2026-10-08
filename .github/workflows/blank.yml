@@ -1,0 +1,82 @@
+name: Virtual RDP
+
+on:
+  workflow_dispatch:
+    inputs:
+      instance_number:
+        description: 'Instance Number (1-10)'
+        required: true
+        default: '1'
+        type: string
+
+jobs:
+  rdp:
+    runs-on: windows-latest
+    timeout-minutes: 360
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: System Information
+        shell: powershell
+        run: |
+          Write-Host "=== ENIGMANO RDP DEPLOYMENT ==="
+          Write-Host "Instance Number: \${{ github.event.inputs.instance_number }}"
+          Write-Host "Runner: \$env:RUNNER_NAME"
+          Write-Host "Workflow: \$env:GITHUB_WORKFLOW"
+          Write-Host "`n=== SYSTEM SPECIFICATIONS ==="
+
+      - name: Install 7-Zip (Direct)
+        shell: powershell
+        run: |
+          Write-Host "Downloading 7-Zip..."
+          $zipUrl = "https://7-zip.org"
+          $installerPath = "$env:TEMP\7z-installer.exe"
+          Invoke-WebRequest -Uri $zipUrl -OutFile $installerPath
+          Write-Host "Installing 7-Zip silently..."
+          Start-Process -FilePath $installerPath -ArgumentList "/S" -Wait
+          Remove-Item $installerPath -Force
+          Write-Host "7-Zip installed!"
+
+      - name: Connection Details
+        shell: powershell
+        run: |
+          Write-Host "`n=== CONNECTION DETAILS ==="
+          Write-Host "||"
+          Write-Host "||             ENIGMANO RDP ACCESS             ||"
+          Write-Host "||"
+          Write-Host "|| Host: \$env:TAILSCALE_IP"
+          Write-Host "|| Username: runneradmin"
+          Write-Host "|| Password: P@ssw0rd!"
+          Write-Host "||"
+          Write-Host "`nConnection Instructions:"
+          Write-Host "1. Install Tailscale on your device."
+          Write-Host "2. Log in with the same Tailscale account."
+          Write-Host "3. Open Remote Desktop app (RDP)."
+          Write-Host "4. Use the provided credentials to connect."
+
+      - name: Keep Session Alive
+        shell: powershell
+        run: |
+          Write-Host "`n=== SESSION ACTIVE ==="
+          Write-Host "EnigMano RDP instance is running..."
+          Write-Host "Instance will remain active for up to 6 hours."
+          Write-Host "Do not close this window/job."
+          
+          \$counter = 0
+          while (\(true) {\)counter++
+              Write-Host "Session active - Heartbeat #\$counter"
+              
+              # Verifica se o Tailscale está rodando
+              \$tsStatus = & "C:\Program Files\Tailscale\tailscale.exe" status
+              if (\$tsStatus -match "active") {
+                  Write-Host "Tailscale status: Active"
+              } else {
+                  Write-Host "Tailscale status: Inactive, restarting..."
+                  & "C:\Program Files\Tailscale\tailscale.exe" up
+              }
+              
+              Start-Sleep -Seconds 60
+          }
+          
